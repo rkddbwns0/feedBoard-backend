@@ -3,6 +3,7 @@ import http from 'http';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 import passport from 'passport';
+import cors from 'cors';
 import userRouter from './rotuer/userRouter';
 import postRouter from './rotuer/postRouter';
 import commentRouter from './rotuer/commentRouter';
@@ -10,13 +11,14 @@ import authRouter from './rotuer/authRouter';
 import newsAPIRouter from './rotuer/newsAPIRouter';
 import './passport/local-strategy';
 import session from 'express-session';
+import initalizeJwtStrategy from './passport/jwt-strategy';
 
 const app = express();
 dotenv.config();
-
+app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-
+initalizeJwtStrategy();
 app.use(
     session({
         secret: process.env.SESSION_SECRET || 'secret',

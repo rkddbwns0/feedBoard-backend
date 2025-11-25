@@ -50,4 +50,41 @@ router.post('/', storage.single('profile_image'), async (req: Request, res: Resp
     }
 });
 
+router.get('/check-email/:email', async (req: Request, res: Response) => {
+    try {
+        const { email } = req.params;
+
+        const findUser = await pgQuery('SELECT * FROM users WHERE email = $1', [email]);
+
+        const user = findUser?.rows[0];
+
+        if (user) {
+            return res.status(409).json({ message: '이미 존재하는 이메일입니다.' });
+        }
+
+        return res.status(200).json({ message: '사용 가능한 이메일입니다.' });
+    } catch (e) {
+        console.error(e);
+        res.status(500).json({ message: '이메일 확인 실패' });
+    }
+});
+
+router.get('/check-nickname/:nickname', async (req: Request, res: Response) => {
+    try {
+        const { nickname } = req.params;
+
+        const findUser = await pgQuery('SELECT * FROM users WHERE nickname = $1', [nickname]);
+
+        const user = findUser?.rows[0];
+
+        if (user) {
+            return res.status(409).json({ message: '이미 존재하는 닉네임입니다.' });
+        }
+
+        return res.status(200).json({ message: '사용 가능한 닉네임입니다.' });
+    } catch (e) {
+        res.status(500).json({ message: '닉네임 중복 확인 실패' });
+    }
+});
+
 export default router;
